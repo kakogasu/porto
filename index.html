@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kakogasu — Portofolio</title>
+    <link rel="icon" type="image/x-icon" href="IMG/logo.png">
+    <!-- Tailwind via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        /* Biru cerah menyambung */
+        --c1:#38bdf8; /* sky-400 */
+        --c2:#3b82f6; /* blue-500 */
+        --c3:#1d4ed8; /* blue-600 */
+        --c4:#1e40af; /* blue-700 */
+        --c5:#1e3a8a; /* blue-800 */
+        --c6:#0b1f4b; /* deep blue */
+
+        --grad-hero: linear-gradient(to bottom, var(--c1), var(--c2) 45%, var(--c3) 100%);
+        --grad-about: linear-gradient(to bottom, var(--c3), var(--c4));
+        --grad-services: linear-gradient(to bottom, var(--c4), var(--c5));
+        --grad-work: linear-gradient(to bottom, var(--c5), var(--c6));
+        --solid-footer: var(--c6);
+      }
+
+      html{ font-family: Inter, ui-sans-serif, system-ui; }
+      .serif{ font-family: "Playfair Display", serif; }
+      section{ scroll-margin-top: 88px; }
+
+      /* ====== GLASS (BLUR + OUTLINE) untuk Services / Work / Discord ====== */
+      .glass{
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.45);   /* outline */
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+      .section-inner{
+        border-radius: 1.25rem;
+        padding: 1.25rem;
+        position: relative;         /* untuk shapes */
+        overflow: hidden;           /* potong shapes keluar */
+        isolation: isolate;         /* perbaiki mix-blend */
+      }
+
+      /* ====== SHAPES (aksen blob gradien) ====== */
+      .shapes{ pointer-events: none; position: absolute; inset: 0; z-index: -1; }
+      .shape{
+        position: absolute;
+        filter: blur(40px);
+        opacity: .75;
+        border-radius: 9999px;
+        mix-blend-mode: screen;
+        transform: translateZ(0); /* GPU hint */
+        animation: float 10s ease-in-out infinite;
+      }
+      .shape.s1{ width: 38vmin; height: 38vmin; background: radial-gradient(circle at 30% 30%, rgba(56,189,248,.9), rgba(59,130,246,.0) 60%); }
+      .shape.s2{ width: 46vmin; height: 46vmin; background: radial-gradient(circle at 70% 40%, rgba(59,130,246,.9), rgba(29,78,216,.0) 60%); animation-delay: -2.5s; }
+      .shape.s3{ width: 30vmin; height: 30vmin; background: radial-gradient(circle at 50% 70%, rgba(29,78,216,.9), rgba(30,64,175,.0) 60%); animation-delay: -5s; }
+
+      @keyframes float{
+        0%,100%{ transform: translate3d(0,0,0); }
+        50%{ transform: translate3d(0, -12px, 0); }
+      }
+
+      /* ====== Interaksi mengikuti mouse (tilt + highlight) ====== */
+      .follow-tilt{
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform .12s ease-out, box-shadow .12s ease-out;
+        will-change: transform, box-shadow, background;
+      }
+      .follow-tilt::after{
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        pointer-events: none;
+        background: radial-gradient(300px 300px at var(--gx,50%) var(--gy,50%),
+                    rgba(255,255,255,.25), rgba(255,255,255,0) 60%);
+        mix-blend-mode: screen;
+        opacity: .55;
+        transition: opacity .15s ease-out;
+      }
+      .follow-tilt > *{ transform: translateZ(22px); }
+
+      /* SERVICE & WORK cards */
+      .service-card,
+      .work-card{
+        border-radius: 1rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,.30);
+      }
+      .service-title{ font-weight: 800; letter-spacing: .2px; }
+      .work-card img{ border-radius: .75rem; }
+
+      /* ====== HEADER: transparan, selalu terlihat ====== */
+      #siteHeader{
+        position: fixed;
+        top: 0; left: 0; width: 100%;
+        z-index: 50;
+        background: transparent;
+      }
+
+      /* Navbar pill transparan */
+      .nav-pill{
+        border-radius: 9999px;
+        background: transparent;
+        border: none;
+      }
+
+      /* Tombol Discord: glass */
+      .glass-btn{
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.45);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+      }
+      .glass-btn::before{
+        content:"";
+        position:absolute; inset:-1px;
+        background: radial-gradient(220px 220px at 30% 30%, rgba(255,255,255,.25), transparent 60%);
+        mix-blend-mode: screen;
+        pointer-events:none;
+      }
+
+      /* Non-hover device (mobile): matikan tilt agar performa bagus */
+      @media (hover: none) and (pointer: coarse){
+        .follow-tilt{ transform: none !important; }
+        .follow-tilt::after{ display: none; }
+      }
+    </style>
+  </head>
+  <body class="text-zinc-100" style="background: var(--solid-footer);">
+
+    <!-- HEADER (transparan) -->
+    <header id="siteHeader">
+      <div class="mx-auto max-w-7xl px-6 flex justify-between items-center py-6">
+        <a href="#" class="text-xl font-bold">Kakogasu</a>
+        <!-- Tombol kanan: Discord (GLASS + SHAPE spotlight) -->
+        <a href="https://discord.gg/q2uzP7Xccn" target="_blank" class="hidden sm:flex items-center gap-2 rounded-2xl px-4 py-2 glass-btn hover:bg-white/20 transition">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span class="text-sm font-medium">Discord</span>
+        </a>
+      </div>
+      <nav class="pointer-events-none absolute left-1/2 top-2 sm:top-8 -translate-x-1/2">
+        <ul class="pointer-events-auto glass rounded-full shadow-2xl ring-1 ring-black/5 dark:ring-white/10 px-4 py-2 flex items-center gap-6">
+          <!-- Ubah About -> Home, arahkan ke hero -->
+          <li><a href="#hero" class="navlink px-3">Home</a></li>
+          <li><a href="#services" class="navlink px-3">Services</a></li>
+          <li><a href="#work" class="navlink px-3">Work</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- HERO (gradient; tanpa blur) + About digabung -->
+    <section id="hero" class="min-h-screen flex items-center" style="background: var(--grad-hero);">
+      <div class="mx-auto max-w-5xl px-6">
+        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight">
+          dari <span class="italic" style="color: #032f6d;">ide</span> menjadi
+          <span class="serif italic text-white">desain</span>,
+          yang <span class="serif italic text-white">bermakna</span>.
+        </h1>
+        <p class="mt-6 text-lg text-white/90">
+          Desain <span class="serif italic font-bold" style="color: #032f6d;">kreatif</span> untuk brand yang berkesan.
+        </p>
+
+        <!-- Konten About dipindah ke sini -->
+        <div class="mt-8 text-white/90 max-w-3xl">
+          <p>
+            Saya <span class="italic" style="color: #032f6d;">ihza</span>, 
+            seorang desainer grafis yang berdedikasi untuk menghadirkan nilai lebih melalui desain.
+            Setiap karya yang saya buat berawal dari ide sederhana yang kemudian saya kembangkan dengan penuh perhatian, riset, dan kreativitas.
+          </p>
+        </div>
+
+        <div class="mt-10 flex gap-4">
+          <a href="#services" class="px-5 py-3 rounded-xl bg-white text-blue-700 font-semibold shadow hover:scale-105 transition">Lihat Services</a>
+          <a href="#work" class="px-5 py-3 rounded-xl ring-1 ring-white/60 text-white hover:bg-white/10 transition">Lihat Work</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- (SEKSI ABOUT DIHAPUS) -->
+
+    <!-- SERVICES (gradient + GLASS + SHAPES) -->
+    <section id="services" class="py-24" style="background: var(--grad-services);">
+      <div class="mx-auto max-w-5xl px-6">
+        <div class="section-inner glass">
+          <!-- SHAPES -->
+          <div class="shapes" aria-hidden="true">
+            <span class="shape s1" style="top:-14%; right:-12%;"></span>
+            <span class="shape s2" style="bottom:-16%; left:-10%;"></span>
+            <span class="shape s3" style="top:55%; left:52%; transform:translate(-50%,-50%);"></span>
+          </div>
+          <!-- CONTENT -->
+          <h2 class="text-2xl font-semibold mb-6 text-white">Services</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <article class="service-card glass follow-tilt p-5">
+              <div class="service-title text-white text-lg">Desain Grafis</div>
+              <p class="mt-3 text-sm text-white/90">
+                Brand kit, poster, feed IG, banner, thumbnail. Termasuk 2–3 opsi konsep, revisi terarah, dan master file (PNG/SVG/PSD).
+              </p>
+              <ul class="mt-3 text-xs text-white/85 list-disc pl-4 space-y-1">
+                <li>Guideline singkat & variasi ukuran</li>
+                <li>Optimasi multi-platform</li>
+                <li>Waktu pengerjaan fleksibel</li>
+              </ul>
+            </article>
+
+            <article class="service-card glass follow-tilt p-5">
+              <div class="service-title text-white text-lg">MV (Music Video)</div>
+              <p class="mt-3 text-sm text-white/90">
+                Editing MV/AMV style anime/vtuber: timing beat, transisi sinematik, typographic motion, dan color grading dasar.
+              </p>
+              <ul class="mt-3 text-xs text-white/85 list-disc pl-4 space-y-1">
+                <li>Storyboard ringkas sebelum eksekusi</li>
+                <li>Output 1080p/60fps</li>
+                <li>Revisi ritme & transisi</li>
+              </ul>
+            </article>
+
+            <article class="service-card glass follow-tilt p-5">
+              <div class="service-title text-white text-lg">Video Editing</div>
+              <p class="mt-3 text-sm text-white/90">
+                Konten YouTube/Shorts: pacing kuat, hook 3–5 detik, caption dinamis, dan sound design ringan.
+              </p>
+              <ul class="mt-3 text-xs text-white/85 list-disc pl-4 space-y-1">
+                <li>Template caption & highlight</li>
+                <li>Rasio 16:9 / 9:16 / 1:1</li>
+                <li>Optimasi durasi & retention</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORK (gradient + GLASS + SHAPES) -->
+    <section id="work" class="py-24" style="background: var(--grad-work);">
+      <div class="mx-auto max-w-6xl px-6">
+        <div class="section-inner glass">
+          <!-- SHAPES -->
+          <div class="shapes" aria-hidden="true">
+            <span class="shape s1" style="top:-12%; left:-12%;"></span>
+            <span class="shape s2" style="bottom:-18%; right:-10%;"></span>
+            <span class="shape s3" style="top:50%; left:48%; transform:translate(-50%,-50%);"></span>
+          </div>
+          <!-- CONTENT -->
+          <h2 class="text-2xl font-semibold mb-6 text-white">My Work</h2>
+
+          <div class="grid md:grid-cols-3 gap-6">
+            <article class="work-card glass follow-tilt p-5">
+              <h3 class="font-semibold text-white">Desain Grafis</h3>
+              <p class="mt-2 text-sm text-white/90">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+              <img src="IMG/wip.png" alt="desain grafis" class="w-full mt-4" />
+              <p class="text-sm text-white/90 mt-3">
+               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl at convallis hendrerit, augue erat varius leo, sit amet dignissim nisl risus id purus. Praesent fringilla, turpis at tincidunt mattis, odio erat fermentum nulla, vel tincidunt neque urna nec nunc. Phasellus luctus, neque non viverra tincidunt, ex mauris vehicula leo, at cursus sapien ipsum ac enim. Donec et neque eget nibh suscipit pretium. Suspendisse imperdiet risus non nibh feugiat, ut cursus erat interdum. Vivamus ac varius nulla.
+              </p>
+            </article>
+
+            <article class="work-card glass follow-tilt p-5">
+              <h3 class="font-semibold text-white">MV (Music Video)</h3>
+              <p class="mt-2 text-sm text-white/90">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+              <img src="IMG/wip.png" alt="MV" class="w-full mt-4" />
+              <p class="text-sm text-white/90 mt-3">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl at convallis hendrerit, augue erat varius leo, sit amet dignissim nisl risus id purus. Praesent fringilla, turpis at tincidunt mattis, odio erat fermentum nulla, vel tincidunt neque urna nec nunc. Phasellus luctus, neque non viverra tincidunt, ex mauris vehicula leo, at cursus sapien ipsum ac enim. Donec et neque eget nibh suscipit pretium. Suspendisse imperdiet risus non nibh feugiat, ut cursus erat interdum. Vivamus ac varius nulla.
+              </p>
+            </article>
+
+            <article class="work-card glass follow-tilt p-5">
+              <h3 class="font-semibold text-white">Video Editing</h3>
+              <p class="mt-2 text-sm text-white/90">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+              <img src="IMG/wip.png" alt="Video Editing" class="w-full mt-4" />
+              <p class="text-sm text-white/90 mt-3">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl at convallis hendrerit, augue erat varius leo, sit amet dignissim nisl risus id purus. Praesent fringilla, turpis at tincidunt mattis, odio erat fermentum nulla, vel tincidunt neque urna nec nunc. Phasellus luctus, neque non viverra tincidunt, ex mauris vehicula leo, at cursus sapien ipsum ac enim. Donec et neque eget nibh suscipit pretium. Suspendisse imperdiet risus non nibh feugiat, ut cursus erat interdum. Vivamus ac varius nulla.
+              </p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER (solid; tanpa blur) -->
+    <footer class="py-12 bg-[var(--solid-footer)]">
+      <div class="mx-auto max-w-5xl px-6">
+        <!-- Judul -->
+        <h3 class="text-xl font-semibold text-white">Social Media</h3>
+        <p class="mt-2 text-white/80">ihzawafi870@gmail.com</p>
+
+        <!-- Sosmed -->
+        <div class="mt-6 flex gap-6 items-center">
+          <a href="https://vgen.co/kakogasu" target="_blank" class="transition hover:scale-110">
+            <img src="logo/VG Logo Badge - for dark bg.png" alt="VGen" class="w-7 h-7 object-contain" />
+          </a>
+          <a href="https://www.facebook.com/ihza.wafi.3" target="_blank" class="text-white/70 hover:text-blue-500 transition">
+            <i data-lucide="facebook" class="w-6 h-6"></i>
+          </a>
+          <a href="https://www.instagram.com/ihza.wafi/" target="_blank" class="text-white/70 hover:text-pink-500 transition">
+            <i data-lucide="instagram" class="w-6 h-6"></i>
+          </a>
+        </div>
+
+        <!-- Copyright -->
+        <p class="mt-8 text-xs text-white/60">
+          © 2025 Studio. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      lucide.createIcons();
+
+      // ====== Efek mengikuti mouse (tilt + spotlight) untuk .follow-tilt ======
+      (function(){
+        const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        if (!supportsHover) return; // di mobile, biarkan statis
+
+        const cards = document.querySelectorAll('.follow-tilt');
+        const clamp = (n, min, max) => Math.max(min, Math.min(n, max));
+
+        cards.forEach(card => {
+          const maxRotate = 10; // derajat
+          const handleMove = (e) => {
+            const rect = card.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const x = e.clientX - cx;
+            const y = e.clientY - cy;
+            const rx = clamp( ( y / (rect.height/2) ) * -maxRotate, -maxRotate, maxRotate);
+            const ry = clamp( ( x / (rect.width/2) ) *  maxRotate, -maxRotate,  maxRotate);
+
+            const gx = ((e.clientX - rect.left) / rect.width) * 100;
+            const gy = ((e.clientY - rect.top) / rect.height) * 100;
+
+            card.style.setProperty('--gx', gx + '%');
+            card.style.setProperty('--gy', gy + '%');
+            card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+            card.style.boxShadow = `0 18px 48px rgba(0,0,0,.40)`;
+          };
+
+          const reset = () => {
+            card.style.transform = 'perspective(900px) rotateX(0) rotateY(0)';
+            card.style.boxShadow = '0 10px 30px rgba(0,0,0,.30)';
+            card.style.setProperty('--gx', '50%');
+            card.style.setProperty('--gy', '50%');
+          };
+
+          card.addEventListener('mousemove', handleMove);
+          card.addEventListener('mouseleave', reset);
+        });
+      })();
+    </script>
+  </body>
+</html>
