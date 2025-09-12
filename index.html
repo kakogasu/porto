@@ -141,12 +141,6 @@
     <!-- HEADER (transparan) -->
     <header id="siteHeader">
       <div class="mx-auto max-w-7xl px-6 flex justify-between items-center py-6">
-        <a href="#" class="text-xl font-bold">Kakogasu</a>
-        <!-- Tombol kanan: Discord (GLASS + SHAPE spotlight) -->
-        <a href="https://discord.gg/q2uzP7Xccn" target="_blank" class="hidden sm:flex items-center gap-2 rounded-2xl px-4 py-2 glass-btn hover:bg-white/20 transition">
-          <i data-lucide="message-circle" class="w-4 h-4"></i>
-          <span class="text-sm font-medium">Discord</span>
-        </a>
       </div>
       <nav class="pointer-events-none absolute left-1/2 top-2 sm:top-8 -translate-x-1/2">
         <ul class="pointer-events-auto glass rounded-full shadow-2xl ring-1 ring-black/5 dark:ring-white/10 px-4 py-2 flex items-center gap-6">
@@ -179,14 +173,20 @@
           </p>
         </div>
 
-        <div class="mt-10 flex gap-4">
-          <a href="#services" class="px-5 py-3 rounded-xl bg-white text-blue-700 font-semibold shadow hover:scale-105 transition">Lihat Services</a>
-          <a href="#work" class="px-5 py-3 rounded-xl ring-1 ring-white/60 text-white hover:bg-white/10 transition">Lihat Work</a>
+        <!-- TOMBOL: Discord + My Works (sudah diperbaiki) -->
+        <div class="mt-10 flex flex-wrap gap-4 items-center">
+          <!-- Discord (tetap buka tab baru) -->
+          <a href="https://discord.gg/q2uzP7Xccn" target="_blank" class="flex items-center gap-2 rounded-2xl px-4 py-2 glass-btn hover:bg-white/20 transition"> 
+            <i data-lucide="message-circle" class="w-4 h-4"></i>
+            <span class="text-sm font-medium">Join Discord</span>
+          </a>
+          <!-- My Works (ke anchor #work, tidak perlu tab baru) -->
+          <a href="#work" class="flex items-center gap-2 rounded-2xl px-4 py-2 glass-btn hover:bg-white/20 transition">
+            My Works
+          </a>
         </div>
       </div>
     </section>
-
-    <!-- (SEKSI ABOUT DIHAPUS) -->
 
     <!-- SERVICES (gradient + GLASS + SHAPES) -->
     <section id="services" class="py-24" style="background: var(--grad-services);">
@@ -291,7 +291,7 @@
     <footer class="py-12 bg-[var(--solid-footer)]">
       <div class="mx-auto max-w-5xl px-6">
         <!-- Judul -->
-        <h3 class="text-xl font-semibold text-white">Social Media</h3>
+        <h3 class="text-xl font-semibold text-white">My contacts</h3>
         <p class="mt-2 text-white/80">ihzawafi870@gmail.com</p>
 
         <!-- Sosmed -->
